@@ -20,6 +20,7 @@ var player = {
 	width:20,
 	height:20,
 	color:'blue',
+	atkSpd:1
 };
 
 var enemyList = {};
@@ -66,8 +67,7 @@ Enemy = function (id,x,y,spdX,spdY,width,height){
 	
 }
 
-
-Upgrade = function (id,x,y,spdX,spdY,width,height){
+Upgrade = function (id,x,y,spdX,spdY,width,height,color,type,score){
 	var upgrade = {
 		x:x,
 		spdX:spdX,
@@ -77,7 +77,9 @@ Upgrade = function (id,x,y,spdX,spdY,width,height){
 		id:id,
 		width:width,
 		height:height,
-		color:'orange',
+		color:color,
+		type:type,
+		score:score
 	};
 	upgrades[id] = upgrade;
 	
@@ -94,6 +96,7 @@ Bullet = function (id,x,y,spdX,spdY,width,height){
 		width:width,
 		height:height,
 		color:'gray',
+		timer:0
 	};
 	bullets[id] = bullet;
 	
@@ -118,7 +121,18 @@ randomUpgrade = function(){
     var id = Math.random();
     var width = 10;
     var height = 10;
-    Upgrade(id, x , y, spdX, spdY, width, height);
+	var type;
+	var color;
+	var score;
+	if(Math.random() < 0.7){
+		type = 'score';
+		color = 'orange'
+	}
+	else{
+		type = 'atkspd';
+		color = 'green';
+	}
+    Upgrade(id, x , y, spdX, spdY, width, height,type,color,score);
 }
 
 randomBullet = function(){
@@ -197,13 +211,20 @@ update = function(){
     if(framecount%75 == 0){
         randomUpgrade();
     }
-    // if(framecount%25 == 0){
-    //     randomBullet();
-    // }
+    if(framecount%25 == 0){
+        randomBullet();
+    }
 
 	
     for(var key in bullets){
         updateEntity(bullets[key]);
+		bullets[key].timer++;
+
+		if(bullets[key].timer > 100){
+			delete bullets[key];
+			continue;
+		}
+
         for(var id in enemyList){
             var isColliding = testCollisionEntity(bullets[key], enemyList[id]);
             if(isColliding){
@@ -219,7 +240,14 @@ update = function(){
         updateEntity(upgrades[key]);
         var isColliding = testCollisionEntity(player, upgrades[key]);
 		if(isColliding){
-            score += 100;
+
+			switch(upgrades[key].type){
+				case 'score':
+					score+=100;
+				case 'atkspd':
+					player.atkSpd+=.2;
+			}
+			
 			delete upgrades[key];
 		}
     }
@@ -251,6 +279,7 @@ newGame = function(){
     score = 0;
     enemyList = {};
     upgrades = {};
+	bullets = {};
 }
 
 newGame();
