@@ -197,10 +197,11 @@ update = function(){
     if(framecount%75 == 0){
         randomUpgrade();
     }
-    if(framecount%25 == 0){
-        randomBullet();
-    }
+    // if(framecount%25 == 0){
+    //     randomBullet();
+    // }
 
+	
     for(var key in bullets){
         updateEntity(bullets[key]);
         for(var id in enemyList){
