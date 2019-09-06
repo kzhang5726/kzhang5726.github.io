@@ -191,12 +191,16 @@ document.onkeydown = function(event){
 	switch(event.keyCode){
 		case 68:
 			player.right = true;
+			break;
 		case 83:
 			player.down = true;
+			break;
 		case 65:
 			player.left = true;
+			break;
 		case 87:
 			player.up = true;
+			break;
 	}
 }
 
@@ -204,12 +208,16 @@ document.onkeyup = function(event){
 	switch(event.keyCode){
 		case 68:
 			player.right = false;
+			break;
 		case 83:
 			player.down = false;
+			break;
 		case 65:
 			player.left = false;
+			break;
 		case 87:
 			player.up = false;
+			break;
 	}
 }
 
@@ -324,8 +332,10 @@ update = function(){
 			switch(upgrades[key].type){
 				case 'score':
 					score+=100;
+					break;
 				case 'atkspd':
 					player.atkSpd+=.2;
+					break;
 			}
 			
 			delete upgrades[key];
