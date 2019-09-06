@@ -67,6 +67,7 @@ Enemy = function (id,x,y,spdX,spdY,width,height){
 		width:width,
 		height:height,
 		color:'red',
+		aimAngle:0
 	};
 	enemyList[id] = enemy3;
 	
@@ -140,44 +141,50 @@ randomUpgrade = function(){
     Upgrade(id, x , y, spdX, spdY, width, height,type,color,score);
 }
 
-randomBullet = function(){
-    var x = player.x;
-    var y = player.y;
+randomBullet = function(actor, new_angle){
+    var x = actor.x;
+    var y = actor.y;
     var height = 10;
     var width = 10;
     var id = Math.random();
-    var angle = Math.random()*2*Math.PI;
+    var angle = actor.aimAngle;
+
+	if(new_angle != undefined){
+		angle = new_angle;
+	}
+
     var spdX = Math.cos(angle)*25;
     var spdY = Math.sin(angle)*25;
     Bullet(id, x , y, spdX, spdY, width, height);
 }
 
 document.onmousemove = function(mouse){
-	// var mouseX = mouse.clientX - 8;
-	// var mouseY = mouse.clientY - 8;
-	
-    // if(mouseX < player.width/2){
-    //     mouseX = player.width/2;
-    // }
-    // if(mouseX > WIDTH - player.width/2){
-    //     mouseX = WIDTH - player.width/2;
-    // }
-    // if(mouseY < player.height/2){
-    //     mouseY = player.height/2;
-    // }
-    // if(mouseY > HEIGHT - player.height/2){
-    //     mouseY = HEIGHT - player.height/2;
-    // }
+	var mouseX = mouse.clientX - 8;
+	var mouseY = mouse.clientY - 8;
 
-	// player.x = mouseX;
-	// player.y = mouseY;
+	mouseX -= player.x;
+	mouseY -= player.y;
+	
+	player.aimAngle = Math.atan2(mouseY,mouseX) / Math.PI * 180;
+
 }
 
 document.onclick = function(mouse){
 	if(player.atkcounter > 25){
-        randomBullet();
+        randomBullet(player);
 		player.atkcounter = 0;
     }
+}
+
+document.oncontextmenu = function(mouse){
+	if(player.atkcounter > 100){
+		
+		for(var i = 0; i < 360; i++){
+			randomBullet(player, i);
+		}
+		player.atkcounter = 0;
+	}
+	mouse.preventDefault();
 }
 
 document.onkeydown = function(event){
