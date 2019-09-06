@@ -142,8 +142,8 @@ randomBullet = function(){
     var width = 10;
     var id = Math.random();
     var angle = Math.random()*2*Math.PI;
-    var spdX = Math.cos(angle);
-    var spdY = Math.sin(angle);
+    var spdX = Math.cos(angle)*100;
+    var spdY = Math.sin(angle)*100;
     Bullet(id, x , y, spdX, spdY, width, height);
 }
 
@@ -211,7 +211,7 @@ update = function(){
     if(framecount%75 == 0){
         randomUpgrade();
     }
-    if(framecount%25 == 0){
+    if(framecount% Math.round(25/player.atkSpd) == 0){
         randomBullet();
     }
 
@@ -220,7 +220,16 @@ update = function(){
         updateEntity(bullets[key]);
 		bullets[key].timer++;
 
-		if(bullets[key].timer > 100){
+		if(bullets[key].timer > 20){
+			delete bullets[key];
+			continue;
+		}
+
+		if(bullets.x >= 500 || bullets.x <= 0){
+			delete bullets[key];
+			continue;
+		}
+		if(bullets.y >= 500 || bullets.y <= 0){
 			delete bullets[key];
 			continue;
 		}
