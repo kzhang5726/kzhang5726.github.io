@@ -20,7 +20,12 @@ var player = {
 	width:20,
 	height:20,
 	color:'blue',
-	atkSpd:1
+	atkSpd:1,
+	atkcounter:0,
+	up:false,
+	down:false,
+	left:false,
+	right:false,
 };
 
 var enemyList = {};
@@ -148,26 +153,85 @@ randomBullet = function(){
 }
 
 document.onmousemove = function(mouse){
-	var mouseX = mouse.clientX - 8;
-	var mouseY = mouse.clientY - 8;
+	// var mouseX = mouse.clientX - 8;
+	// var mouseY = mouse.clientY - 8;
 	
-    if(mouseX < player.width/2){
-        mouseX = player.width/2;
-    }
-    if(mouseX > WIDTH - player.width/2){
-        mouseX = WIDTH - player.width/2;
-    }
-    if(mouseY < player.height/2){
-        mouseY = player.height/2;
-    }
-    if(mouseY > HEIGHT - player.height/2){
-        mouseY = HEIGHT - player.height/2;
-    }
+    // if(mouseX < player.width/2){
+    //     mouseX = player.width/2;
+    // }
+    // if(mouseX > WIDTH - player.width/2){
+    //     mouseX = WIDTH - player.width/2;
+    // }
+    // if(mouseY < player.height/2){
+    //     mouseY = player.height/2;
+    // }
+    // if(mouseY > HEIGHT - player.height/2){
+    //     mouseY = HEIGHT - player.height/2;
+    // }
 
-	player.x = mouseX;
-	player.y = mouseY;
+	// player.x = mouseX;
+	// player.y = mouseY;
 }
 
+document.onclick = function(mouse){
+	if(player.atkcounter > 25){
+        randomBullet();
+		player.atkcounter = 0;
+    }
+}
+
+document.onkeydown = function(event){
+	switch(event.keyCode){
+		case 68:
+			player.right = true;
+		case 83:
+			player.down = true;
+		case 65:
+			player.left = true;
+		case 87:
+			player.up = true;
+	}
+}
+
+document.onkeyup = function(event){
+	switch(event.keyCode){
+		case 68:
+			player.right = false;
+		case 83:
+			player.down = false;
+		case 65:
+			player.left = false;
+		case 87:
+			player.up = false;
+	}
+}
+
+updatePlayerPosition = function(event){
+	if(player.right){
+		player.x += 10;
+	}
+	if(player.left){
+		player.x -= 10;
+	}
+	if(player.down){
+		player.y -= 10;
+	}
+	if(player.up){
+		player.y += 10;
+	}
+	if(player.x < player.width/2){
+        player.x = player.width/2;
+    }
+    if(player.x > WIDTH - player.width/2){
+        player.x = WIDTH - player.width/2;
+    }
+    if(player.y < player.height/2){
+        player.y = player.height/2;
+    }
+    if(player.y > HEIGHT - player.height/2){
+        player.y = HEIGHT - player.height/2;
+    }
+}
 
 updateEntity = function (something){
 	updateEntityPosition(something);
@@ -200,6 +264,8 @@ drawEntity = function(something){
 	ctx.restore();
 }
 
+var counter = 0;
+
 update = function(){
     framecount++;
     score++;
@@ -211,10 +277,8 @@ update = function(){
     if(framecount%75 == 0){
         randomUpgrade();
     }
-    if(framecount% Math.round(25/player.atkSpd) == 0){
-        randomBullet();
-    }
 
+	player.atkcounter += player.atkSpd;
 	
     for(var key in bullets){
         updateEntity(bullets[key]);
@@ -275,7 +339,7 @@ update = function(){
                 newGame();
 		}
 	}
-	
+	updatePlayerPosition();
 	drawEntity(player);
 	ctx.fillText(player.hp + " Hp",210,30);
     ctx.fillText( "Score : " + score, 10, 30);
